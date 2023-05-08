@@ -4,8 +4,8 @@
 source config.cfg
 
 user_mail_exists(){
-          cat /etc/passwd | grep "mail" > /app/user_mail
-          if [ -s /app/user_mail ]; then
+	  user_exists=$(cat /etc/passwd | grep "mail")
+          if [ ! -z "$user_exists" ]; then
             echo "The mail user and group exists."
             # Create the new empty file
             touch "$FILEPATH"
@@ -22,7 +22,7 @@ user_mail_exists(){
 # Check if the file exists
 if [ ! -f "$FILEPATH" ]
 then
-    echo "file does not exists"
+    echo "$FILEPATH does not exists"
     exit 55
 else
     # To get the filesize in MB
