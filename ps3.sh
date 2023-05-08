@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # set time zone to US Eastern time
-export TZ=EST5EDT
+export TZ="America/Los_Angeles"
 
 # Define folder path, age and compression threshold in days
 FOLDER="/usr/training"
