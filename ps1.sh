@@ -1,6 +1,7 @@
 #! /bin/bash
 
-FILEPATH="/app/access.log"
+# Added the configuration file containing variables
+source config.cfg
 
 user_mail_exists(){
           cat /etc/passwd | grep "mail" > /app/user_mail
@@ -30,13 +31,10 @@ else
     if (( filesize >= 5 )); then
       rm "$FILEPATH"
       # Email address to send the email to
-          TO_ADDRESS="rushikesh.markad@afourtech.com"
-          SUBJECT="access.log deleted"
-          MESSAGE="As the file size was equal to or more than 5 MB access.log file was deleted"
-          echo "$MESSAGE" | mail -s "$SUBJECT" "$TO_ADDRESS"
+          echo "$DEL_MESSAGE" | mail -s "$DEL_SUBJECT" "$TO_ADDRESS"
 
           # Print a message indicating that the mail has been sent
-          echo "Mail has been sent to $TO_ADDRESS with subject $SUBJECT"
+          echo "Mail has been sent to $TO_ADDRESS with subject $DEL_SUBJECT"
 
          # To check if the user and group mail exists
           user_mail_exists
@@ -52,13 +50,10 @@ else
           echo "File renamed to $NEWNAME"
 
          # Email address to send the email to
-          TO_ADDRESS="rushikesh.markad@afourtech.com"
-          SUBJECT="access.log renamed"
-          MESSAGE="As the file size was equal to or more than 1MB file was renamed to $NEWNAME"
-          echo "$MESSAGE" | mail -s "$SUBJECT" "$TO_ADDRESS"
+           echo "$RENAME_MESSAGE" | mail -s "$RENAME_SUBJECT" "$TO_ADDRESS"
 
           # Print a message indicating that the mail has been sent
-          echo "Mail has been sent to $TO_ADDRESS with subject $SUBJECT"
+          echo "Mail has been sent to $TO_ADDRESS with subject $RENAME_SUBJECT"
 
           # To check if the user and group mail exists
           user_mail_exists
