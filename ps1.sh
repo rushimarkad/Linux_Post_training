@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -e
+
 # Added the configuration file containing variables
 source config.cfg
 

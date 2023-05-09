@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 #Print timestamp for log
 date +"%d-%m-%Y %H:%M:%S" >> /home/rushikesh/post_training/ps.log
 

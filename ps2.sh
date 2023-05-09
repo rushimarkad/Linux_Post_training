@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Set the source and destination directories
 SRC_DIR=/var/log
 DEST_DIR=/tmp/mylogs
