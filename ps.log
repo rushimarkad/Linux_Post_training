@@ -1,0 +1,32 @@
+08-05-2023 18:35:55
+/app/access.log does not exists.....Exiting with status 55
+08-05-2023 19:22:34
+/app/access.log does not exists.....Exiting with status 55
+08-05-2023 19:24:02
+File renamed to access-2023-05-08.log
+Mail has been sent to rushikesh.markad@afourtech.com with subject access.log renamed
+The mail user and group exists.
+The owner and group of /app/access.log have been changed to mail:mail.
+08-05-2023 19:25:46
+Mail has been sent to rushikesh.markad@afourtech.com with subject access.log deleted
+The mail user and group exists.
+The owner and group of /app/access.log have been changed to mail:mail.
+Timezone changed to America/Los_Angeles successfully
+Following files are deleted successfully
+/usr/training/file3.log
+/usr/training/file4.log
+mail sent with list of deleted files
+Following files are compressed successfully : /usr/training/file2.log
+/usr/training/file1.log
+mail sent with list of compressed files
+Timezone changed to Asia/Kolkata successfully
+08-05-2023 19:33:29
+Timezone changed to America/Los_Angeles successfully
+Following files are deleted successfully
+/usr/training/file3.log
+/usr/training/file4.log
+mail sent with list of deleted files
+Following files are compressed successfully : /usr/training/file2.log
+/usr/training/file1.log
+mail sent with list of compressed files
+Timezone changed to Asia/Kolkata successfully
