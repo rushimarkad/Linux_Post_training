@@ -30,3 +30,56 @@ Following files are compressed successfully : /usr/training/file2.log
 /usr/training/file1.log
 mail sent with list of compressed files
 Timezone changed to Asia/Kolkata successfully
+12-05-2023 00:32:30
+/app/access.log does not exists.....Exiting with status 55
+12-05-2023 00:33:39
+File renamed to access-2023-05-12.log
+Mail has been sent to rushikesh.markad@afourtech.com with subject access.log renamed
+The mail user and group exists.
+The owner and group of /app/access.log have been changed to mail:mail.
+12-05-2023 00:36:20
+/app/access.log renamed to access-2023-05-12.log
+Mail has been sent to rushikesh.markad@afourtech.com with subject access.log renamed
+The mail user and group exists.
+The owner and group of /app/access.log have been changed to mail:mail.
+12-05-2023 00:37:39
+Mail has been sent to rushikesh.markad@afourtech.com with subject access.log deleted
+The mail user and group exists.
+The owner and group of /app/access.log have been changed to mail:mail.
+12-05-2023 00:38:19
+12-05-2023 00:43:53
+Timezone changed to America/Los_Angeles successfully
+Following files are deleted successfully
+/usr/training/file3.log
+/usr/training/file4.log
+mail sent with list of deleted files
+Following files are compressed successfully : /usr/training/file2.log
+/usr/training/file1.log
+mail sent with list of compressed files
+Timezone changed to Asia/Kolkata successfully
+12-05-2023 00:48:15
+Timezone changed to America/Los_Angeles successfully
+None of the file deleted
+None of the file is compressed
+Timezone changed to Asia/Kolkata successfully
+12-05-2023 12:44:44
+/app/access.log does not exists.....Exiting with status 55
+12-05-2023 12:46:58
+Mail has been sent to rushikesh.markad@afourtech.com with subject access.log deleted
+The mail user and group exists.
+The owner and group of /app/access.log have been changed to mail:mail.
+12-05-2023 12:49:21
+/app/access.log renamed to access-2023-05-12.log
+Mail has been sent to rushikesh.markad@afourtech.com with subject access.log renamed
+The mail user and group exists.
+The owner and group of /app/access.log have been changed to mail:mail.
+12-05-2023 12:53:05
+Timezone changed to America/Los_Angeles successfully
+Following files are deleted successfully
+/usr/training/file3.log
+/usr/training/file4.log
+mail sent with list of deleted files
+Following files are compressed successfully : /usr/training/file2.log
+/usr/training/file1.log
+mail sent with list of compressed files
+Timezone changed to Asia/Kolkata successfully
