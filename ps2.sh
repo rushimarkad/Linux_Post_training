@@ -26,14 +26,11 @@ generate_random_logs() {
     for ((i=1; i<=5; i++))
     do
       log_file="$LOG_DIR/log$i.log"
-      random_log=$(shuf -n 1 -e "ERROR: This is an error message" "WARNINGS: This is a warning message" "INFO: This is an informational message")
+      random_log=$(shuf -n 1 -e "ERROR: This is an error log" "WARNINGS: This is a warning log" "INFO: This is an informational message")
       echo "$random_log" >> "$log_file"
     done
-    LOOP_PID=$$
-    echo "$LOOP_ID"
-    #bg $LOOP_PID
     sleep 120
-  done
+  done &
 }
 
 # Create the log files
