@@ -2,21 +2,38 @@
 
 set -e
 
-# Take varaibles from config file
+#Take the variable from config file
 source variable.ini
 
-# Set email settings
+function log_statement () {
+  echo "$(date "+%d-%m-%Y %H:%M:%S") : $1" >> "$LOGPATH"
+}
+
+# Create the log files
+create_log_files() {
+  for ((i=1; i<=5; i++))
+  do
+    log_file="$LOG_DIR/log$i.log"
+    touch "$log_file"
+  done
+}
+
+# Function to generate random text lines and append them to log files
+generate_random_logs() {
+  while true
+  do
+    for ((i=1; i<=5; i++))
+    do
+      log_file="$LOG_DIR/log$i.log"
+      random_log=$(shuf -n 1 -e "ERROR: This is an error log" "WARNINGS: This is a warning log" "INFO: This is an informational message")
+      echo "$random_log" >> "$log_file"
+    done
+    sleep 120
+  done &
+}
+
 EMAIL_SUBJECT="Log files with ERROR or WARNINGS"
 EMAIL_BODY=""
-
-# Create the destination directory if it doesn't exist
-mkdir -p $DEST_DIR
-
-# Function to find and copy log files containing ERROR or WARNINGS
-function copy_logs {
-  # Find log files containing ERROR or WARNINGS
-  find $SRC_DIR -name "*.log" -type f -mmin -2 -exec grep -Hn "ERROR\|WARNINGS" {} \; | xargs -I{} cp {} $DEST_DIR
-}
 
 # Function to send email with log file details
 function send_email {
@@ -25,19 +42,27 @@ function send_email {
   while read LINE
   do
     EMAIL_BODY+="$LINE\n"
-  done < <(find $DEST_DIR -name "*.log" -type f -mmin -60 -exec grep -Hn "ERROR\|WARNINGS" {} \; | sed 's/:[^:]*:/: line /g')
+  done < <(find $LOG_DIR -name "*.log" -type f -mmin -60 -exec grep -Hn "ERROR\|WARNINGS" {} \; | sed 's/:[^:]*:/: line /g')
 
   # Send the email with the details of the log files
   echo -e "$EMAIL_BODY" | mail -s "$EMAIL_SUBJECT" "$TO_ADDRESS"
+  log_statement "Email has been sent to $TO_ADDRESS with the files containing ERRORS/WARNINGS"
 }
 
-# Run the script continuously in an infinite loop
+# Create the log files
+create_log_files
+
+# Call the function to generate random lines and append them to log files
+generate_random_logs
+
+new_logs=$(find $LOG_DIR -name "*.log" -type f -mmin -60 -exec grep -Hn "ERROR\|WARNINGS" {} \;)
+echo "$new_logs"
+
+# Call the function to send mails in proper format
 while true
 do
-  copy_logs
   if [ $(date +%M) = "00" ]; then
     send_email
   fi
   sleep 60
 done
-
