@@ -1,0 +1,242 @@
+Linux post training
+
+
+
+
+
+
+
+#! /bin/bash
+
+set -e
+
+# Added the configuration file containing variables
+source variable.ini
+
+function log_statement () {
+  echo "$(date "+%d-%m-%Y %H:%M:%S") : $1" >> "$LOGPATH"
+}
+
+user_mail_exists(){
+          user_exists=$(cat /etc/passwd | grep "mail")
+          if [ ! -z "$user_exists" ]; then
+            # Create the new empty file
+            touch "$FILEPATH"
+
+            # Change the owner and group of the file to mail:mail
+            chown mail:mail "$FILEPATH"
+
+            log_statement "The owner and group of /app/access.log have been changed to mail:mail."
+          else
+            log_statement "The mail user or group does not exist."
+          fi
+}
+
+# Check if the file exists
+if [ ! -f "$FILEPATH" ]
+then
+    log_statement "$FILEPATH does not exists.....Exiting with status 55"
+    exit 55
+else
+    # To get the filesize in MB
+    filesize=$(du -m "$FILEPATH" | cut -f1)
+
+    if (( filesize >= 5 )); then
+      rm "$FILEPATH"
+      # Email address to send the email to
+          echo "$DEL_MESSAGE" | mail -s "$DEL_SUBJECT" "$TO_ADDRESS"
+
+          # Print a message indicating that the mail has been sent
+          log_statement "Mail has been sent to $TO_ADDRESS with subject $DEL_SUBJECT"
+
+         # To check if the user and group mail exists
+          user_mail_exists
+
+    elif (( filesize >= 1 )); then
+          # Generate the new file name with the current date
+          NEWNAME="access-$(date +"%Y-%m-%d").log"
+
+          # Rename the file
+          mv "$FILEPATH" "/app/$NEWNAME"
+
+          # Print a message indicating that the file has been renamed
+          log_statement "$FILEPATH renamed to $NEWNAME"
+
+         # Email address to send the email to
+           echo "$RENAME_MESSAGE" | mail -s "$RENAME_SUBJECT" "$TO_ADDRESS"
+
+         # Print a message indicating that the mail has been sent
+          log_statement "Mail has been sent to $TO_ADDRESS with subject $RENAME_SUBJECT"
+
+          # To check if the user and group mail exists
+          user_mail_exists
+    fi
+fi
+
+
+
+
+
+
+
+
+
+
+
+#!/bin/bash
+
+set -e
+
+#Take the variable from config file
+source variable.ini
+
+function log_statement () {
+  echo "$(date "+%d-%m-%Y %H:%M:%S") : $1" >> "$LOGPATH"
+}
+
+# Create the log files
+create_log_files() {
+  for ((i=1; i<=5; i++))
+  do
+    log_file="$LOG_DIR/log$i.log"
+    touch "$log_file"
+  done
+}
+
+# Function to generate random text lines and append them to log files
+generate_random_logs() {
+  while true
+  do
+    for ((i=1; i<=5; i++))
+    do
+      log_file="$LOG_DIR/log$i.log"
+      random_log=$(shuf -n 1 -e "ERROR: This is an error log" "WARNINGS: This is a warning log" "INFO: This is an informational message")
+      echo "$random_log" >> "$log_file"
+    done
+    sleep 120
+  done &
+}
+
+EMAIL_SUBJECT="Log files with ERROR or WARNINGS"
+EMAIL_BODY=""
+
+# Function to send email with log file details
+function send_email {
+  # Update the email body with the new logs files
+  EMAIL_BODY=""
+  while read LINE
+  do
+    EMAIL_BODY+="$LINE\n"
+  done < <(find $LOG_DIR -name "*.log" -type f -mmin -60 -exec grep -Hn "ERROR\|WARNINGS" {} \; | sed 's/:[^:]*:/: line /g')
+
+  # Send the email with the details of the log files
+  echo -e "$EMAIL_BODY" | mail -s "$EMAIL_SUBJECT" "$TO_ADDRESS"
+}
+
+# Create the log files
+create_log_files
+
+# Call the function to generate random lines and append them to log files
+generate_random_logs
+
+new_logs=$(find $LOG_DIR -name "*.log" -type f -mmin -60 -exec grep -Hn "ERROR\|WARNINGS" {} \;)
+echo "$new_logs" &
+
+# Call the function to send mails in proper format
+while true
+do
+  if [ $(date +%M) = "00" ]; then
+    send_email
+  fi
+  sleep 60
+done
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#!/bin/bash
+
+set -e
+
+#Take the variable from config file
+source variable.ini
+
+function log_statement () {
+  echo "$(date "+%d-%m-%Y %H:%M:%S") : $1" >> "$LOGPATH"
+}
+
+# set time zone to US Eastern time
+export TZ="America/Los_Angeles"
+log_statement "Timezone changed to America/Los_Angeles successfully"
+
+# Delete old log files and write the paths to a log file
+find "$FOLDER" -name "*.log" -type f -mtime +$AGE_THRESHOLD -delete -print > /home/rushikesh/deleted_files.log
+if [[ -s /home/rushikesh/deleted_files.log ]]; then
+    # Send email with deleted file list as attachment
+    DELETED_FILES_SUBJECT="Deleted file list $(date +'%Y-%m-%d %H:%M:%S')"
+    echo -e "Please find attached the list of deleted files.\n\n" | mailx -s "$DELETED_FILES_SUBJECT" -A /home/rushikesh/deleted_files.log -- rushikesh.markad@afourtech.com
+    log_statement "Following files are deleted successfully"
+    cat /home/rushikesh/deleted_files.log >> /home/rushikesh/post_training/ps.log
+    log_statement "mail sent to $TO_ADDRESS with list of deleted files"
+else
+    log_statement "None of the file deleted"
+fi
+
+
+# Compress files older than the compression threshold
+COMPRESSED_FILES=$(find "$FOLDER" -type f -mtime +$COMPRESSION_THRESHOLD -exec gzip {} \; -exec echo {} \;)
+
+if [[ ! -z "$COMPRESSED_FILES" ]]; then
+    # Send email with compressed file list as email body
+    COMPRESSED_FILES_SUBJECT="Compressed file list $(date +'%Y-%m-%d %H:%M:%S')"
+    echo -e "Please find below the list of compressed files:\n\n$COMPRESSED_FILES" | mailx -s "$COMPRESSED_FILES_SUBJECT" rushikesh.markad@afourtech.com
+    log_statement "Following files are compressed successfully : \n $COMPRESSED_FILES"
+    log_statement "mail sent to $TO_ADDRESS with list of compressed files"
+else
+    log_statement "None of the file is compressed"
+fi
+
+
+# set time zone again to IST
+export TZ="Asia/Kolkata"
+log_statement "Timezone changed to Asia/Kolkata successfully"
+
+
+
+
+
+
+
+
+
+variable.ini
+
+FILEPATH="/app/access.log"
+TO_ADDRESS="rushikesh.markad@afourtech.com"
+
+DEL_SUBJECT="access.log deleted"
+DEL_MESSAGE="As the file size was equal to or more than 5 MB access.log file was deleted"
+
+
+RENAME_SUBJECT="access.log renamed"
+RENAME_MESSAGE="As the file size was equal to or more than 1MB file was renamed to $NEWNAME"
+
+FOLDER="/usr/training"
+
+AGE_THRESHOLD=30
+
+COMPRESSION_THRESHOLD=2
+
+LOG_DIR="/tmp/mylogs/"
+
+LOGPATH="/home/rushikesh/post_training/ps.log"
